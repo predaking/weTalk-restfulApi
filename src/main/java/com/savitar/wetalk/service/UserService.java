@@ -6,4 +6,5 @@ import com.savitar.wetalk.util.ResponseResult;
 public interface UserService {
     boolean addUser(User user);
     boolean comparePassword(User user, User userIndataBase);
+//    boolean changeHead(User user);
 }

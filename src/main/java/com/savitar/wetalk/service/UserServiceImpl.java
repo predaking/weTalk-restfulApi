@@ -32,4 +32,8 @@ public class UserServiceImpl implements UserService {
         return user.getPassword().equals(userIndataBase.getPassword());
 
     }
+
+//    public boolean changeHead(User user) {
+//        return true;
+//    }
 }

@@ -21,6 +21,7 @@ public class User {
     private Date birthday;
     private String address;
     private String tel;
+    private String head;
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -68,6 +69,14 @@ public class User {
 
     public String getTel() {
         return tel;
+    }
+
+    public void setHead(String head) {
+        this.head = head;
+    }
+
+    public String getHead() {
+        return head;
     }
 
     public void User() {
