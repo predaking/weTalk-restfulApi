@@ -29,7 +29,7 @@ public class AuthenticationApi {
     @PostMapping("")
     public Object login(@RequestBody User user) {
         User userIndataBase = userRepository.findByNickname(user.getNickname());
-        System.out.println(userIndataBase);
+        System.out.println(user + "--" + user.getNickname() + "--" + userIndataBase + "--" + userRepository.findByNickname(user.getNickname()));
         JSONObject jsonObject = new JSONObject();
         if(userIndataBase == null) {
             jsonObject.put("code", -1);
@@ -40,7 +40,8 @@ public class AuthenticationApi {
         } else {
             String token = authenticationService.getToken(userIndataBase);
             jsonObject.put("token", token);
-            jsonObject.put("user", userIndataBase);
+            jsonObject.put("nickname", userIndataBase.getNickname());
+            jsonObject.put("head", userIndataBase.getHead());
         }
         return jsonObject;
     }

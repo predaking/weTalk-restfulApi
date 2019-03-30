@@ -43,18 +43,19 @@ public class UserController {
     }
 
     @RequestMapping(value="/changeHead", method = RequestMethod.POST)
-    public ResponseResult changeHead(@RequestParam("file") MultipartFile file, String nickName) {
-        System.out.println(file + nickName);
+    public ResponseResult changeHead(@RequestParam("file") MultipartFile file, String nickname) {
+        System.out.println(nickname);
         String contentType = file.getContentType();
         String fileName = file.getOriginalFilename();
-        String filePath = "/img/";
+        String filePath = "E:\\weTalkImages\\";
         System.out.println(fileName);
         try {
             FileUtil.uploadFile(file.getBytes(), filePath, fileName);
+            userRepository.changeHead(nickname, fileName);
         } catch (Exception e) {
-
+            return RetResponse.makeRsp(-1, "上传失败", e);
         }
-        return RetResponse.makeRsp(200, "上传成功", filePath+fileName);
+        return RetResponse.makeRsp(200, "上传成功", fileName);
 //        return RetResponse.makeOKRsp();
     }
 }

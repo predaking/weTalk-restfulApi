@@ -26,8 +26,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "token");
+//        response.setHeader("Access-Control-Allow-Origin", "*");
+//        response.setHeader("Access-Control-Allow-Headers", "token");
         if(!(handler instanceof HandlerMethod)) {
             return true;
         }
@@ -37,9 +37,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         LoginRequired methodAnnotation = method.getAnnotation(LoginRequired.class);
         if(methodAnnotation != null) {
             String token = request.getHeader("token");
-            System.out.println("--"+ token + "--");
             if(token == "") {
-                System.out.println("-- !!!!!! --");
                 response.sendError(HttpServletResponse.SC_FORBIDDEN,"无token,请重新登录");
                 return false;
             }
