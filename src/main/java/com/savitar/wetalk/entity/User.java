@@ -1,7 +1,5 @@
 package com.savitar.wetalk.entity;
 
-import org.hibernate.annotations.Generated;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

@@ -2,13 +2,8 @@ package com.savitar.wetalk.service;
 
 import com.savitar.wetalk.dao.UserRepository;
 import com.savitar.wetalk.entity.User;
-import com.savitar.wetalk.util.ResponseResult;
-import com.savitar.wetalk.util.RetResponse;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
