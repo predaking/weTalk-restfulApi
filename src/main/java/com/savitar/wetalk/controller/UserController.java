@@ -32,11 +32,10 @@ public class UserController {
 
     @RequestMapping(value = "/register",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     public ResponseResult addUser(@RequestBody User user) {
-//        ResponseResult<User> responseResult = new ResponseResult<User>();
         if(userService.addUser(user)) {
             User userIndataBase = userRepository.findByNickname(user.getNickname());
             String token = authenticationService.getToken(userIndataBase);
-            return RetResponse.makeRsp(200, "", token);
+            return RetResponse.makeRsp(200, "注册成功", token);
         }
         else
             return RetResponse.makeRsp(-1, "该用户名已被占用");

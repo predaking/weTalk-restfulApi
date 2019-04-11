@@ -1,10 +1,11 @@
 package com.savitar.wetalk.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "article")
@@ -16,7 +17,11 @@ public class Article {
     private String nickname;
     private String head;
     private String location;
-    private String publish_time;
+
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date publish_time;
+
+//    @Column(columnDefinition = "TEXT")
     private String content;
     private int praise_count = 0;
     private int comment_count = 0;
@@ -24,6 +29,10 @@ public class Article {
     private String article_type = "原创";
     private int transmit_id = -1;
     private String transmit_content;
+    private String transmit_nickname;
+
+    @Transient
+    private List<ArticlePicture> articlePicture;
 
     public int getId() {
         return id;
@@ -53,11 +62,12 @@ public class Article {
         return location;
     }
 
-    public void setPublish_time(String publish_time) {
+    public void setPublish_time(Date publish_time) {
+
         this.publish_time = publish_time;
     }
 
-    public String getPublish_time() {
+    public Date getPublish_time() {
         return publish_time;
     }
 
@@ -115,5 +125,25 @@ public class Article {
 
     public String getTransmit_content() {
         return transmit_content;
+    }
+
+    public void setTransmit_nickname(String transmit_nickname) {
+        this.transmit_nickname = transmit_nickname;
+    }
+
+    public String getTransmit_nickname() {
+        return transmit_nickname;
+    }
+
+    public void setArticles(List<Article> list) {
+
+    }
+
+    public void setArticlePicture(List<ArticlePicture> articlePicture) {
+        this.articlePicture = articlePicture;
+    }
+
+    public List<ArticlePicture> getArticlePicture() {
+        return articlePicture;
     }
 }
