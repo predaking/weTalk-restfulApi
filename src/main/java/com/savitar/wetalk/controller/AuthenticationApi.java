@@ -8,6 +8,9 @@ import com.savitar.wetalk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/authentication")
@@ -21,6 +24,10 @@ public class AuthenticationApi {
     private UserService userService;
 
     @Autowired
+    private HttpSession session;
+
+
+    @Autowired
     public AuthenticationApi(AuthenticationService authenticationService, UserRepository userRepository) {
         this.authenticationService = authenticationService;
         this.userRepository = userRepository;
@@ -29,6 +36,8 @@ public class AuthenticationApi {
     @PostMapping("")
     public Object login(@RequestBody User user) {
         User userIndataBase = userRepository.findByNickname(user.getNickname());
+        session.setAttribute("userId", userIndataBase.getId());
+        System.out.println("+++++++++++" + session.getAttribute("userId") + "++++++++++");
         System.out.println(user + "--" + user.getNickname() + "--" + userIndataBase + "--" + userRepository.findByNickname(user.getNickname()));
         JSONObject jsonObject = new JSONObject();
         if(userIndataBase == null) {
@@ -42,6 +51,8 @@ public class AuthenticationApi {
             jsonObject.put("token", token);
             jsonObject.put("nickname", userIndataBase.getNickname());
             jsonObject.put("head", userIndataBase.getHead());
+//            jsonObject.put("user_id", userIndataBase.getId());
+//            System.out.println(jsonObject.get("user_id")+ "---");
         }
         return jsonObject;
     }

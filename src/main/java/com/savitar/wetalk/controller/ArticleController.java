@@ -1,6 +1,7 @@
 package com.savitar.wetalk.controller;
 
 import com.savitar.wetalk.dao.ArticlePictureRepository;
+import com.savitar.wetalk.dao.PraiseRepository;
 import com.savitar.wetalk.entity.Article;
 import com.savitar.wetalk.service.ArticleService;
 import com.savitar.wetalk.util.FileUtil;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @CrossOrigin
@@ -22,9 +24,14 @@ public class ArticleController {
     @Autowired
     private ArticlePictureRepository articlePictureRepository;
 
+    @Autowired
+    private PraiseRepository praiseRepository;
+
+    @Autowired
+    private HttpSession session;
 
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
-    public ResponseResult addArticle(@RequestParam("files") MultipartFile[] files, Article article) {
+    public ResponseResult publish(@RequestParam("files") MultipartFile[] files, Article article) {
         System.out.println(article);
         Article newArticle = articleService.addArticle(article);
         int currentId = newArticle.getId();
@@ -46,6 +53,14 @@ public class ArticleController {
     @RequestMapping(value = "/articleList", method = RequestMethod.GET)
     public ResponseResult articleList() {
         List<Article> allArticles = articleService.getAllArticles();
+//        System.out.println(globalInfo.getUserId());
         return RetResponse.makeRsp(200, "请求成功", allArticles);
+    }
+
+    @RequestMapping(value = "/praise", method = RequestMethod.POST)
+    public ResponseResult praise(@RequestParam Integer id, @RequestParam Integer praiseCount, @RequestParam Integer praiseState) {
+        articleService.praise(id, praiseCount);
+        praiseRepository.updatePraise_state(id, (int)session.getAttribute("userId"), praiseState);
+        return RetResponse.makeOKRsp();
     }
 }

@@ -14,8 +14,7 @@ public class Article {
     @Id
     @GeneratedValue
     private int id;
-    private String nickname;
-    private String head;
+
     private String location;
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -33,6 +32,15 @@ public class Article {
 
     @Transient
     private List<ArticlePicture> articlePicture;
+
+    @Transient
+    private int praise_state;
+
+    @Transient
+    private String nickname;
+
+    @Transient
+    private String head;
 
     public int getId() {
         return id;
@@ -145,5 +153,13 @@ public class Article {
 
     public List<ArticlePicture> getArticlePicture() {
         return articlePicture;
+    }
+
+    public void setPraise_state(int praise_state) {
+        this.praise_state = praise_state;
+    }
+
+    public int getPraise_state() {
+        return praise_state;
     }
 }
