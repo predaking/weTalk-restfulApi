@@ -17,7 +17,7 @@ public class Article {
 
     private String location;
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+//    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date publish_time;
 
 //    @Column(columnDefinition = "TEXT")
@@ -34,6 +34,9 @@ public class Article {
     private List<ArticlePicture> articlePicture;
 
     @Transient
+    private List<ArticlePicture> transmitPicture;
+
+    @Transient
     private int praise_state;
 
     @Transient
@@ -41,6 +44,12 @@ public class Article {
 
     @Transient
     private String head;
+
+    @Transient
+    private List<Comment> comments;
+
+    @Transient
+    private List<Reply> replies;
 
     public int getId() {
         return id;
@@ -155,11 +164,35 @@ public class Article {
         return articlePicture;
     }
 
+    public void setTransmitPicture(List<ArticlePicture> transmitPicture) {
+        this.transmitPicture = transmitPicture;
+    }
+
+    public List<ArticlePicture> getTransmitPicture() {
+        return transmitPicture;
+    }
+
     public void setPraise_state(int praise_state) {
         this.praise_state = praise_state;
     }
 
     public int getPraise_state() {
         return praise_state;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
+    }
+
+    public List<Reply> getReplies() {
+        return replies;
     }
 }

@@ -14,6 +14,14 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Transactional
     void updateArticleByPraiseCount(int id, int praiseCount);
 
+    @Query(nativeQuery = true, value = "update article set transmit_count=?2 where id=?1")
+    @Modifying
+    @Transactional
+    void updateArticleByTransmitCount(int id, int praiseCount);
+
+    Article findById(int id);
+
     @Query(nativeQuery = true, value = "select * from article order by publish_time desc")
     List<Article> findAllArticles();
+
 }

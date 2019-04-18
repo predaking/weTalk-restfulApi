@@ -1,8 +1,7 @@
 package com.savitar.wetalk.controller;
 
-import com.savitar.wetalk.dao.ArticlePictureRepository;
-import com.savitar.wetalk.dao.PraiseRepository;
-import com.savitar.wetalk.entity.Article;
+import com.savitar.wetalk.dao.*;
+import com.savitar.wetalk.entity.*;
 import com.savitar.wetalk.service.ArticleService;
 import com.savitar.wetalk.util.FileUtil;
 import com.savitar.wetalk.util.ResponseResult;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @CrossOrigin
@@ -26,6 +27,9 @@ public class ArticleController {
 
     @Autowired
     private PraiseRepository praiseRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
 
     @Autowired
     private HttpSession session;
@@ -44,16 +48,15 @@ public class ArticleController {
                 FileUtil.uploadFile(files[i].getBytes(), filePath, fileName);
                 articlePictureRepository.publishArticlePictures(currentId, fileName);
             }
+            return RetResponse.makeRsp(200, "上传成功", article);
         } catch (Exception e) {
             return RetResponse.makeRsp(-1, "上传失败", e);
         }
-        return RetResponse.makeRsp(200, "上传成功", article);
     }
 
     @RequestMapping(value = "/articleList", method = RequestMethod.GET)
     public ResponseResult articleList() {
         List<Article> allArticles = articleService.getAllArticles();
-//        System.out.println(globalInfo.getUserId());
         return RetResponse.makeRsp(200, "请求成功", allArticles);
     }
 
@@ -63,4 +66,30 @@ public class ArticleController {
         praiseRepository.updatePraise_state(id, (int)session.getAttribute("userId"), praiseState);
         return RetResponse.makeOKRsp();
     }
+
+    @RequestMapping(value = "/transmit", method = RequestMethod.POST)
+    public ResponseResult transmit(@RequestBody Article article) {
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            df.format(article.getPublish_time());
+            System.out.println("++" + article.getPublish_time() + "++");
+            articleService.addTransmitArticle(article);
+            int oldTransmitCount = articleRepository.findById(article.getTransmit_id()).getTransmit_count();
+            articleRepository.updateArticleByTransmitCount(article.getTransmit_id(), ++oldTransmitCount);
+            return RetResponse.makeRsp(200, "转发成功", article);
+        } catch (Exception e) {
+            return RetResponse.makeRsp(-1, "转发失败", e);
+        }
+    }
+
+    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    public ResponseResult detail(@RequestParam int id) {
+        try {
+            Article article = articleService.getArticleDetail(id);
+            return RetResponse.makeRsp(200, "success", article);
+        } catch (Exception e) {
+            return RetResponse.makeRsp(-1, "error", e);
+        }
+    }
+
 }
