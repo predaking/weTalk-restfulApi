@@ -34,6 +34,12 @@ public class ArticleController {
     @Autowired
     private HttpSession session;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
+
     @RequestMapping(value = "/publish", method = RequestMethod.POST)
     public ResponseResult publish(@RequestParam("files") MultipartFile[] files, Article article) {
         System.out.println(article);
@@ -72,7 +78,6 @@ public class ArticleController {
         try {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             df.format(article.getPublish_time());
-            System.out.println("++" + article.getPublish_time() + "++");
             articleService.addTransmitArticle(article);
             int oldTransmitCount = articleRepository.findById(article.getTransmit_id()).getTransmit_count();
             articleRepository.updateArticleByTransmitCount(article.getTransmit_id(), ++oldTransmitCount);
@@ -87,6 +92,30 @@ public class ArticleController {
         try {
             Article article = articleService.getArticleDetail(id);
             return RetResponse.makeRsp(200, "success", article);
+        } catch (Exception e) {
+            return RetResponse.makeRsp(-1, "error", e);
+        }
+    }
+
+    @RequestMapping(value = "/addComment", method = RequestMethod.POST)
+    public ResponseResult addComment(@RequestBody Comment comment) {
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            df.format(comment.getComment_time());
+            int oldCommentCount = articleRepository.findById(comment.getComment_id()).getComment_count();
+            articleRepository.updateArticleByCommentCount(comment.getComment_id(), ++oldCommentCount);
+            commentRepository.save(comment);
+            return RetResponse.makeOKRsp();
+        } catch (Exception e) {
+            return RetResponse.makeRsp(-1, "error", e);
+        }
+    }
+
+    @RequestMapping(value = "/addReply", method = RequestMethod.POST)
+    public ResponseResult addReply(@RequestBody Reply reply) {
+        try {
+            replyRepository.save(reply);
+            return RetResponse.makeOKRsp();
         } catch (Exception e) {
             return RetResponse.makeRsp(-1, "error", e);
         }

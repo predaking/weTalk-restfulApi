@@ -48,9 +48,6 @@ public class Article {
     @Transient
     private List<Comment> comments;
 
-    @Transient
-    private List<Reply> replies;
-
     public int getId() {
         return id;
     }
@@ -187,12 +184,5 @@ public class Article {
     public List<Comment> getComments() {
         return comments;
     }
-
-    public void setReplies(List<Reply> replies) {
-        this.replies = replies;
-    }
-
-    public List<Reply> getReplies() {
-        return replies;
-    }
+    
 }

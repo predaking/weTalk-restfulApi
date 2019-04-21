@@ -3,7 +3,9 @@ package com.savitar.wetalk.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "comment")
@@ -15,6 +17,9 @@ public class Comment {
     private String comment_user_head;
     private Date comment_time;
     private String comment_content;
+
+    @Transient
+    private List<Reply> replies;
 
     public int getId() {
         return id;
@@ -58,5 +63,13 @@ public class Comment {
 
     public String getComment_content() {
         return comment_content;
+    }
+
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
+    }
+
+    public List<Reply> getReplies() {
+        return replies;
     }
 }

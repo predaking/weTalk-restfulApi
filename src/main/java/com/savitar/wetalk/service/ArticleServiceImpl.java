@@ -64,14 +64,15 @@ public class ArticleServiceImpl implements ArticleService{
     public Article getArticleDetail(int id) {
         int currentId = (int)session.getAttribute("userId");
         Article article = articleRepository.findById(id);
+        List<ArticlePicture> transmitPicture = articlePictureRepository.getArticlePictures(article.getTransmit_id());
         User user = userRepository.findById(currentId);
         Praise praise = praiseRepository.findByArticle_idAndUser_id(article.getId(), currentId);
         article.setArticlePicture(articlePictureRepository.getArticlePictures(id));
         article.setComments(commentRepository.findByComment_id(id));
         List<Comment> comments = article.getComments();
         comments.forEach(comment -> {
-            List<Reply> replies = replyRepository.findByReply_id(comment.getComment_id());
-            article.setReplies(replies);
+            List<Reply> replies = replyRepository.findByReply_id(comment.getId());
+            comment.setReplies(replies);
         });
         if(praise == null)
             article.setPraise_state(0);
@@ -79,6 +80,7 @@ public class ArticleServiceImpl implements ArticleService{
             article.setPraise_state(praise.getPraise_state());
         article.setNickname(user.getNickname());
         article.setHead(user.getHead());
+        article.setTransmitPicture(transmitPicture);
         return article;
     }
 

@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
-    @Query(nativeQuery = true, value = "select * from comment where comment_id = ?1")
+    @Query(nativeQuery = true, value = "select * from comment where comment_id = ?1 order by comment_time desc")
     List<Comment> findByComment_id(int id);
 }
