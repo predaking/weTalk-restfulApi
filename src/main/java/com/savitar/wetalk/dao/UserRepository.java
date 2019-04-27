@@ -14,8 +14,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findById(int id);
 
-    @Query(nativeQuery = true, value = "update user set head=?2 where nickname=?1")
+    @Query(nativeQuery = true, value = "update user set head=?2 where id=?1")
     @Modifying
     @Transactional
-    void changeHead(String nickname, String filename);
+    void changeHead(int id, String filename);
+
 }

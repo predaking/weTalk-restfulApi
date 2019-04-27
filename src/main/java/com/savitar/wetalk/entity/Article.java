@@ -2,6 +2,7 @@ package com.savitar.wetalk.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -39,14 +40,14 @@ public class Article {
     @Transient
     private int praise_state;
 
-    @Transient
+    private int user_id;
+
     private String nickname;
 
-    @Transient
     private String head;
 
     @Transient
-    private List<Comment> comments;
+    private Page<Comment> comments;
 
     public int getId() {
         return id;
@@ -177,12 +178,19 @@ public class Article {
         return praise_state;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Page<Comment> comments) {
         this.comments = comments;
     }
 
-    public List<Comment> getComments() {
+    public Page<Comment> getComments() {
         return comments;
     }
-    
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
 }

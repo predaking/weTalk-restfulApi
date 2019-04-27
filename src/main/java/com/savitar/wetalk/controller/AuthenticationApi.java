@@ -37,8 +37,6 @@ public class AuthenticationApi {
     public Object login(@RequestBody User user) {
         User userIndataBase = userRepository.findByNickname(user.getNickname());
         session.setAttribute("userId", userIndataBase.getId());
-        System.out.println("+++++++++++" + session.getAttribute("userId") + "++++++++++");
-        System.out.println(user + "--" + user.getNickname() + "--" + userIndataBase + "--" + userRepository.findByNickname(user.getNickname()));
         JSONObject jsonObject = new JSONObject();
         if(userIndataBase == null) {
             jsonObject.put("code", -1);
@@ -51,7 +49,7 @@ public class AuthenticationApi {
             jsonObject.put("token", token);
             jsonObject.put("nickname", userIndataBase.getNickname());
             jsonObject.put("head", userIndataBase.getHead());
-//            jsonObject.put("user_id", userIndataBase.getId());
+            jsonObject.put("user_id", userIndataBase.getId());
 //            System.out.println(jsonObject.get("user_id")+ "---");
         }
         return jsonObject;

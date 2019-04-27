@@ -15,6 +15,7 @@ public class Comment {
     private int comment_id;
     private String comment_user;
     private String comment_user_head;
+    private int comment_user_id;
     private Date comment_time;
     private String comment_content;
 
@@ -47,6 +48,14 @@ public class Comment {
 
     public String getComment_user_head() {
         return comment_user_head;
+    }
+
+    public void setComment_user_id(int comment_user_id) {
+        this.comment_user_id = comment_user_id;
+    }
+
+    public int getComment_user_id() {
+        return comment_user_id;
     }
 
     public void setComment_time(Date comment_time) {

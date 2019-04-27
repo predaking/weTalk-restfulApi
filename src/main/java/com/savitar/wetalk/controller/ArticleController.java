@@ -1,5 +1,6 @@
 package com.savitar.wetalk.controller;
 
+import com.savitar.wetalk.annotation.LoginRequired;
 import com.savitar.wetalk.dao.*;
 import com.savitar.wetalk.entity.*;
 import com.savitar.wetalk.service.ArticleService;
@@ -7,6 +8,8 @@ import com.savitar.wetalk.util.FileUtil;
 import com.savitar.wetalk.util.ResponseResult;
 import com.savitar.wetalk.util.RetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,9 +64,22 @@ public class ArticleController {
     }
 
     @RequestMapping(value = "/articleList", method = RequestMethod.GET)
-    public ResponseResult articleList() {
-        List<Article> allArticles = articleService.getAllArticles();
-        return RetResponse.makeRsp(200, "请求成功", allArticles);
+    public ResponseResult articleList(@RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "size", defaultValue = "10") Integer size) {
+//        Sort sort = new Sort(Sort.Direction.DESC, "publish_time");
+            PageRequest pageable = PageRequest.of(page, size);
+            Page<Article> allArticles = articleService.getAllArticles(pageable);
+            return RetResponse.makeRsp(200, "请求成功", allArticles);
+    }
+
+    @RequestMapping(value = "/commentList", method = RequestMethod.GET)
+    public ResponseResult commentList(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "10") int size, @RequestParam("comment_id") int comment_id) {
+            PageRequest pageable = PageRequest.of(page, size);
+            Page<Comment> allComments = commentRepository.findByComment_id(comment_id, pageable);
+            allComments.forEach(comment -> {
+            List<Reply> replies = replyRepository.findByReply_id(comment.getId());
+            comment.setReplies(replies);
+        });
+            return RetResponse.makeRsp(200, "查询成功", allComments);
     }
 
     @RequestMapping(value = "/praise", method = RequestMethod.POST)
@@ -75,50 +91,56 @@ public class ArticleController {
 
     @RequestMapping(value = "/transmit", method = RequestMethod.POST)
     public ResponseResult transmit(@RequestBody Article article) {
-        try {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             df.format(article.getPublish_time());
             articleService.addTransmitArticle(article);
             int oldTransmitCount = articleRepository.findById(article.getTransmit_id()).getTransmit_count();
             articleRepository.updateArticleByTransmitCount(article.getTransmit_id(), ++oldTransmitCount);
             return RetResponse.makeRsp(200, "转发成功", article);
-        } catch (Exception e) {
-            return RetResponse.makeRsp(-1, "转发失败", e);
-        }
     }
 
     @RequestMapping(value = "/detail", method = RequestMethod.POST)
-    public ResponseResult detail(@RequestParam int id) {
-        try {
-            Article article = articleService.getArticleDetail(id);
+    public ResponseResult detail(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size, @RequestParam int id) {
+            PageRequest pageable = PageRequest.of(page, size);
+            Article article = articleService.getArticleDetail(id, pageable);
             return RetResponse.makeRsp(200, "success", article);
-        } catch (Exception e) {
-            return RetResponse.makeRsp(-1, "error", e);
-        }
     }
 
     @RequestMapping(value = "/addComment", method = RequestMethod.POST)
     public ResponseResult addComment(@RequestBody Comment comment) {
-        try {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             df.format(comment.getComment_time());
             int oldCommentCount = articleRepository.findById(comment.getComment_id()).getComment_count();
             articleRepository.updateArticleByCommentCount(comment.getComment_id(), ++oldCommentCount);
             commentRepository.save(comment);
             return RetResponse.makeOKRsp();
-        } catch (Exception e) {
-            return RetResponse.makeRsp(-1, "error", e);
-        }
     }
 
     @RequestMapping(value = "/addReply", method = RequestMethod.POST)
     public ResponseResult addReply(@RequestBody Reply reply) {
-        try {
             replyRepository.save(reply);
             return RetResponse.makeOKRsp();
-        } catch (Exception e) {
-            return RetResponse.makeRsp(-1, "error", e);
-        }
+    }
+
+    @RequestMapping(value = "/deleteArticle", method = RequestMethod.POST)
+    public ResponseResult deleteArticle(@RequestParam("id") int id) {
+        articleRepository.deleteById(id);
+        return RetResponse.makeOKRsp();
+    }
+
+    @RequestMapping(value = "/deleteComment", method = RequestMethod.POST)
+    public ResponseResult deleteComment(@RequestParam("id") int id, @RequestParam("comment_id") int comment_id) {
+        commentRepository.deleteById(id);
+        replyRepository.deleteByReply_id(id);
+        int oldCommentCount = articleRepository.findById(comment_id).getComment_count();
+        articleRepository.updateArticleByCommentCount(comment_id, --oldCommentCount);
+        return RetResponse.makeOKRsp();
+    }
+
+    @RequestMapping(value = "/deleteReply", method = RequestMethod.POST)
+    public ResponseResult deleteReply(@RequestParam("id") int id) {
+        replyRepository.deleteById(id);
+        return RetResponse.makeOKRsp();
     }
 
 }

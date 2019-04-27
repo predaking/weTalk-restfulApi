@@ -13,6 +13,7 @@ public class Reply {
     private int id;
     private int reply_id;
     private String reply_user;
+    private int reply_user_id;
     private String reply_content;
 
     public int getId() {
@@ -33,6 +34,14 @@ public class Reply {
 
     public String getReply_user() {
         return reply_user;
+    }
+
+    public void setReply_user_id(int reply_user_id) {
+        this.reply_user_id = reply_user_id;
+    }
+
+    public int getReply_user_id() {
+        return reply_user_id;
     }
 
     public void setReply_content(String reply_content) {
