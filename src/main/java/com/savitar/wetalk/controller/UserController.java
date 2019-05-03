@@ -1,7 +1,6 @@
 package com.savitar.wetalk.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.savitar.wetalk.annotation.LoginRequired;
 import com.savitar.wetalk.dao.ArticleRepository;
 import com.savitar.wetalk.dao.CommentRepository;
 import com.savitar.wetalk.dao.ReplyRepository;
@@ -16,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,12 +44,6 @@ public class UserController {
     @Autowired
     private ReplyRepository replyRepository;
 
-    @LoginRequired
-    @GetMapping("/ttt")
-    public String testLogin() {
-        return "--success--";
-    }
-
     @RequestMapping(value = "/register",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     public ResponseResult addUser(@RequestBody User user) {
         if(userService.addUser(user)) {
@@ -68,6 +59,29 @@ public class UserController {
         }
         else
             return RetResponse.makeRsp(-1, "该用户名已被占用");
+    }
+
+    @RequestMapping(value = "/api/authentication",method = RequestMethod.POST)
+    public Object login(@RequestBody User user) {
+        User userIndataBase = userRepository.findByNickname(user.getNickname());
+
+        JSONObject jsonObject = new JSONObject();
+        if(userIndataBase == null) {
+            jsonObject.put("code", -1);
+            jsonObject.put("message", "用户不存在");
+        } else if(!userService.comparePassword(user, userIndataBase)) {
+            jsonObject.put("code", -1);
+            jsonObject.put("message", "密码不正确");
+        } else {
+            String token = authenticationService.getToken(userIndataBase);
+            jsonObject.put("token", token);
+            jsonObject.put("nickname", userIndataBase.getNickname());
+            jsonObject.put("head", userIndataBase.getHead());
+            jsonObject.put("user_id", userIndataBase.getId());
+            session.setAttribute("userId", userIndataBase.getId());
+//            System.out.println(jsonObject.get("user_id")+ "---");
+        }
+        return jsonObject;
     }
 
     @RequestMapping(value="/changeHead", method = RequestMethod.POST)

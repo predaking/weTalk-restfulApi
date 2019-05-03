@@ -24,9 +24,6 @@ public class ArticleServiceImpl implements ArticleService{
     private PraiseRepository praiseRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private HttpSession session;
 
     @Autowired
